@@ -38,6 +38,7 @@ dependencies {
     implementation("org.hibernate.validator:hibernate-validator:9.1.0.Final")
     // Source: https://mvnrepository.com/artifact/org.projectlombok/lombok
     implementation("org.projectlombok:lombok:1.18.42")
+    implementation("commons-fileupload:commons-fileupload:1.5")
 }
 
 test {

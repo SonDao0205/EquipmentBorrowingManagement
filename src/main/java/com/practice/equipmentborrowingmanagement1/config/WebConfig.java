@@ -3,7 +3,10 @@ package com.practice.equipmentborrowingmanagement1.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
@@ -39,4 +42,21 @@ public class WebConfig implements WebMvcConfigurer {
         return viewResolver;
     }
 
+    @Bean
+    public MultipartResolver multipartResolver() {
+        return new StandardServletMultipartResolver();
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // Vẫn giữ cho các file tĩnh trong project
+        registry.addResourceHandler("/resources/**")
+                .addResourceLocations("/resources/");
+
+        //  TRỎ ĐẾN THƯ MỤC LƯU FILE BÊN NGOÀI
+        String uploadPath = System.getProperty("user.dir") + "/uploads/images/";
+
+        registry.addResourceHandler("/display-images/**")
+                .addResourceLocations("file:" + uploadPath + "/");
+    }
 }

@@ -2,8 +2,16 @@ package com.practice.equipmentborrowingmanagement1.service;
 
 import com.practice.equipmentborrowingmanagement1.model.entity.Equipment;
 import com.practice.equipmentborrowingmanagement1.repository.EquipmentRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -91,5 +99,31 @@ public class EquipmentService {
 
         equipmentRepository.delete(id);
         return true;
+    }
+
+    public String uploadFile(MultipartFile file, HttpServletRequest request) {
+        if (file == null || file.isEmpty()) {
+            return "default.png";
+        }
+
+        try {
+            // Xác định thư mục lưu trữ
+            String uploadPath = System.getProperty("user.dir") + "/uploads/images/";
+            File uploadDir = new File(uploadPath);
+            if (!uploadDir.exists()) uploadDir.mkdirs();
+
+            // Tạo tên file duy nhất bằng Timestamp để không bị ghi đè
+            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+
+            // Đường dẫn đầy đủ của file
+            Path path = Paths.get(uploadPath + fileName);
+
+            // Copy file vào thư mục
+            Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+
+            return fileName;
+        } catch (IOException e) {
+            throw new RuntimeException("Lỗi khi lưu file: " + e.getMessage());
+        }
     }
 }
