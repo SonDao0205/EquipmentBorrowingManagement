@@ -27,8 +27,41 @@ public class EquipmentRepository {
         e2.setStock(1);
         e2.setStatus(true);
 
+        Equipment e3 = new Equipment();
+        e3.setId(currentId++);
+        e3.setName("Phòng 2");
+        e3.setType("Room");
+        e3.setStock(1);
+        e3.setStatus(true);
+
+        Equipment e4 = new Equipment();
+        e4.setId(currentId++);
+        e4.setName("Phòng 3");
+        e4.setType("Room");
+        e4.setStock(1);
+        e4.setStatus(true);
+
+        Equipment e5 = new Equipment();
+        e5.setId(currentId++);
+        e5.setName("Máy 2");
+        e5.setType("Device");
+        e5.setStock(5);
+        e5.setStatus(true);
+
+        Equipment e6 = new Equipment();
+        e6.setId(currentId++);
+        e6.setName("Máy 3");
+        e6.setType("Device");
+        e6.setStock(20);
+        e6.setStatus(true);
+
         equipments.add(e1);
         equipments.add(e2);
+        equipments.add(e3);
+        equipments.add(e4);
+        equipments.add(e5);
+        equipments.add(e6);
+
     }
 
 
