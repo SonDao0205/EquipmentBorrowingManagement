@@ -1,5 +1,7 @@
 package com.practice.equipmentborrowingmanagement1.model.dto;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class UserRequest {
     private String fullName;
     private String email;
