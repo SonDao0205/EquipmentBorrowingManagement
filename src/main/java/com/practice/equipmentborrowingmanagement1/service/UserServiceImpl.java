@@ -5,6 +5,8 @@ import com.practice.equipmentborrowingmanagement1.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service("UserService")
 public class UserServiceImpl implements UserService {
 
@@ -14,18 +16,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean registerUser(User user) {
 
-
+        if (user == null){
+            return false;
+        }
 
         return false;
     }
 
     @Override
-    public boolean login(String username, String password) {
+    public boolean login(String username, String password, String confirmPassword) {
         return false;
     }
 
     @Override
-    public boolean checkUsername(String username) {
-        return false;
+    public Optional<User> findUserByEmail(String email) {
+        return null;
     }
 }

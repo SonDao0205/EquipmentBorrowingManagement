@@ -6,7 +6,6 @@ build/
 .kotlin
 build.gradle
 .idea
-src/main/java/com/practice/equipmentborrowingmanagement1/config
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
