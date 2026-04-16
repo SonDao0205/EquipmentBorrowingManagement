@@ -1,15 +1,27 @@
 package com.practice.equipmentborrowingmanagement1.model.dto;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 public class EquipmentRequest {
+    @NotBlank(message = "Tên thiết bị không được bỏ trống")
     private String name;
+
+    @NotBlank(message = "Loại thiết bị không được bỏ trống")
     private String type;
+
+    @NotBlank(message = "Hình ảnh không được bỏ trống")
     private String image;
-    private int stock;
+
+    @NotNull(message = "Số lượng không được bỏ trống")
+    @Min(value = 0, message = "Số lượng không được nhỏ hơn 0")
+    private Integer stock;
 
     public EquipmentRequest() {
     }
 
-    public EquipmentRequest(String name, String type, String image, int stock) {
+    public EquipmentRequest(String name, String type, String image, Integer stock) {
         this.name = name;
         this.type = type;
         this.image = image;
@@ -40,11 +52,11 @@ public class EquipmentRequest {
         this.image = image;
     }
 
-    public int getStock() {
+    public Integer getStock() {
         return stock;
     }
 
-    public void setStock(int stock) {
+    public void setStock(Integer stock) {
         this.stock = stock;
     }
 }

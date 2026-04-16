@@ -1,21 +1,48 @@
 package com.practice.equipmentborrowingmanagement1.model.dto;
 
+import com.practice.equipmentborrowingmanagement1.custom_validator.ReturnDateValid;
+import com.practice.equipmentborrowingmanagement1.custom_validator.StudentIdValid;
+import jakarta.validation.constraints.*;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.LocalDate;
 
+@ReturnDateValid
 public class EquipmentFormRequest {
+    @NotBlank(message = "Họ và tên không được để trống")
     private String fullName;
+
+    @NotBlank(message = "Mã sinh viên không được để trống")
+    @StudentIdValid
     private String studentId;
+
+    @NotBlank(message = "Email không được để trống")
+    @Email(message = "Email không đúng định dạng")
     private String email;
+
+    @NotNull(message = "Số lượng mượn không được bỏ trống")
+    @Min(value = 1, message = "Số lượng mượn ít nhất phải là 1")
     private Integer quantity;
+
+    @NotNull(message = "Ngày nhận không được bỏ trống!")
+    @Future(message = "Ngày dự kiến nhận phải là ngày trong tương lai")
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
     private LocalDate borrowDate;
+
+    @NotNull(message = "Ngày trả không được bỏ trống!")
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
     private LocalDate returnDate;
+
+    @NotBlank(message = "Lý do mượn không được để trống")
     private String reason;
-    private int equipmentId;
+
+    @NotNull(message = "Chưa chọn thiết bị")
+    private Integer equipmentId;
 
     public EquipmentFormRequest() {
     }
 
-    public EquipmentFormRequest(String fullName, String studentId, String email, Integer quantity, LocalDate borrowDate, LocalDate returnDate, String reason, int equipmentId) {
+    public EquipmentFormRequest(String fullName, String studentId, String email, Integer quantity, LocalDate borrowDate, LocalDate returnDate, String reason, Integer equipmentId) {
         this.fullName = fullName;
         this.studentId = studentId;
         this.email = email;
@@ -82,11 +109,11 @@ public class EquipmentFormRequest {
         this.reason = reason;
     }
 
-    public int getEquipmentId() {
+    public Integer getEquipmentId() {
         return equipmentId;
     }
 
-    public void setEquipmentId(int equipmentId) {
+    public void setEquipmentId(Integer equipmentId) {
         this.equipmentId = equipmentId;
     }
 }
