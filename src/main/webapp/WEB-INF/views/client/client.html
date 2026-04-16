@@ -1,10 +1,207 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout}">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Danh mục Thiết bị - Sinh viên</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <style>
+
+        .page-title { font-weight: 700; color: #2c3e50; letter-spacing: -0.5px; }
+
+
+        .equipment-card { border-radius: 15px; overflow: hidden; transition: all 0.3s ease; border: none; background: #fff; }
+        .equipment-card:hover { transform: translateY(-8px); box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important; }
+        .card-img-custom { height: 200px; object-fit: cover; border-bottom: 1px solid rgba(0,0,0,0.05); }
+
+
+        .modal-content.custom-modal { border-radius: 20px; border: none; box-shadow: 0 15px 40px rgba(0,0,0,0.2); }
+        .modal-header.custom-header { border-top-left-radius: 20px; border-top-right-radius: 20px; border-bottom: none; padding: 1.5rem; background: linear-gradient(135deg, #004085, #0062cc); }
+        .inner-card { border-radius: 12px; background-color: #f8f9fa; border: 1px solid #e9ecef; }
+
+
+        .form-control-custom { border-radius: 8px; border: 1px solid #ced4da; padding: 0.6rem 1rem; height: auto; transition: all 0.2s; }
+        .form-control-custom:focus { box-shadow: 0 0 0 0.2rem rgba(0,123,255,.15); border-color: #80bdff; }
+        .btn-custom { border-radius: 8px; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; padding: 0.6rem 1.2rem; }
+    </style>
 </head>
 <body>
+<div layout:fragment="content" class="container mt-5 mb-5">
 
+    <div>
+        <div class="d-flex justify-content-between align-items-end mb-4 border-bottom pb-3">
+            <h2 class="page-title mb-0">
+                <i class="bi bi-box-seam text-primary mr-2"></i>Danh mục Thiết bị & Phòng Lab
+            </h2>
+            <span class="text-muted font-italic">Trang mượn đồ dành cho Sinh viên</span>
+        </div>
+
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show shadow-sm" style="border-radius: 10px;" role="alert">
+            <i class="bi bi-check-circle-fill mr-2" style="font-size: 1.2rem; vertical-align: middle;"></i>
+            <strong th:text="${successMessage}"></strong>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6 col-md-4 col-lg-3 mb-4" th:each="item : ${equipments}">
+                <div class="card h-100 equipment-card shadow-sm">
+                    <div class="position-relative">
+                        <img th:src="${item.image != null && !item.image.isEmpty() ? item.image : 'https://via.placeholder.com/400x300?text=No+Image'}"
+                             class="card-img-top card-img-custom" alt="Hình ảnh">
+                        <span class="badge badge-primary position-absolute px-3 py-2 shadow-sm"
+                              style="top: 10px; right: 10px; border-radius: 20px; font-weight: 500;"
+                              th:text="${item.type}">Loại</span>
+                    </div>
+
+                    <div class="card-body d-flex flex-column p-4">
+                        <h5 class="card-title text-dark font-weight-bold mb-3" th:text="${item.name}">Tên thiết bị</h5>
+                        <p class="card-text mt-auto mb-3">
+                            <span class="text-muted small text-uppercase font-weight-bold">Tồn kho hiện tại</span><br>
+                            <span class="badge badge-pill badge-success px-3 py-1" style="font-size: 1rem;" th:text="${item.stock} + ' chiếc'">0</span>
+                        </p>
+
+                        <button class="btn btn-outline-primary btn-custom w-100 mt-2"
+                                data-toggle="modal"
+                                th:data-target="'#borrowModal' + ${item.id}">
+                            <i class="bi bi-cart-plus mr-1"></i> Đăng ký mượn
+                        </button>
+                    </div>
+                </div>
+
+                <div class="modal fade borrow-modal" th:id="'borrowModal' + ${item.id}" tabindex="-1" data-backdrop="static">
+                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                        <div class="modal-content custom-modal">
+                            <form th:action="@{/client/borrow}" th:object="${equipmentFormRequest}" method="POST">
+                                <input type="hidden" name="equipmentId" th:value="${item.id}" />
+
+                                <div class="modal-header custom-header text-white">
+                                    <h5 class="modal-title font-weight-bold">
+                                        <i class="bi bi-file-earmark-text mr-2"></i>Phiếu Đăng Ký Mượn
+                                    </h5>
+                                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="opacity: 0.8; outline: none;">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+
+                                <div class="modal-body p-4 bg-white">
+                                    <div class="text-center mb-4">
+                                        <h4 class="text-primary font-weight-bold" th:text="${item.name}">Tên thiết bị</h4>
+                                        <span class="badge badge-light border text-muted px-3 py-1 rounded-pill">Kho còn: <strong class="text-dark" th:text="${item.stock}"></strong></span>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3 mb-md-0">
+                                            <div class="inner-card p-3 h-100">
+                                                <h6 class="text-secondary font-weight-bold mb-3 border-bottom pb-2">
+                                                    <i class="bi bi-person-badge mr-1"></i> Thông tin sinh viên
+                                                </h6>
+                                                <div class="form-group">
+                                                    <label class="font-weight-bold small text-muted text-uppercase">Họ và tên <span class="text-danger">*</span></label>
+                                                    <input type="text" class="form-control form-control-custom" th:field="*{fullName}" th:errorclass="is-invalid" placeholder="VD: Nguyễn Văn A">
+                                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="font-weight-bold small text-muted text-uppercase">Mã sinh viên <span class="text-danger">*</span></label>
+                                                    <input type="text" class="form-control form-control-custom text-uppercase" th:field="*{studentId}" th:errorclass="is-invalid" placeholder="VD: B21DCCNxxx">
+                                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('studentId')}" th:errors="*{studentId}"></div>
+                                                </div>
+                                                <div class="form-group mb-0">
+                                                    <label class="font-weight-bold small text-muted text-uppercase">Email <span class="text-danger">*</span></label>
+                                                    <input type="email" class="form-control form-control-custom" th:field="*{email}" th:errorclass="is-invalid" placeholder="email@stu.ptit.edu.vn">
+                                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="inner-card p-3 h-100">
+                                                <h6 class="text-secondary font-weight-bold mb-3 border-bottom pb-2">
+                                                    <i class="bi bi-calendar-check mr-1"></i> Chi tiết mượn
+                                                </h6>
+                                                <div class="form-group">
+                                                    <label class="font-weight-bold small text-muted text-uppercase">Số lượng <span class="text-danger">*</span></label>
+                                                    <input type="number" class="form-control form-control-custom" th:field="*{quantity}" th:errorclass="is-invalid" min="1" placeholder="Nhập số lượng">
+                                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}"></div>
+                                                </div>
+                                                <div class="form-row">
+                                                    <div class="form-group col-md-6">
+                                                        <label class="font-weight-bold small text-muted text-uppercase">Ngày nhận <span class="text-danger">*</span></label>
+                                                        <input type="date" class="form-control form-control-custom" th:field="*{borrowDate}" th:errorclass="is-invalid">
+                                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('borrowDate')}" th:errors="*{borrowDate}"></div>
+                                                    </div>
+                                                    <div class="form-group col-md-6">
+                                                        <label class="font-weight-bold small text-muted text-uppercase">Ngày trả <span class="text-danger">*</span></label>
+                                                        <input type="date" class="form-control form-control-custom" th:field="*{returnDate}" th:errorclass="is-invalid">
+                                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('returnDate')}" th:errors="*{returnDate}"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mb-0">
+                                                    <label class="font-weight-bold small text-muted text-uppercase">Lý do <span class="text-danger">*</span></label>
+                                                    <textarea class="form-control form-control-custom" rows="2" th:field="*{reason}" th:errorclass="is-invalid" placeholder="Phục vụ môn học, làm đồ án..."></textarea>
+                                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('reason')}" th:errors="*{reason}"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="modal-footer bg-light" style="border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; border-top: 1px solid #dee2e6;">
+                                    <button type="button" class="btn btn-light btn-custom px-4 text-secondary border" data-dismiss="modal">Hủy bỏ</button>
+                                    <button type="submit" class="btn btn-primary btn-custom px-5 shadow-sm">
+                                        <i class="bi bi-send mr-1"></i> Gửi Yêu Cầu
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${equipments == null or equipments.isEmpty()}" class="text-center py-5">
+            <div class="p-5 bg-white rounded-lg shadow-sm d-inline-block mt-4" style="border: 2px dashed #dee2e6;">
+                <i class="bi bi-box-seam text-muted" style="font-size: 4rem;"></i>
+                <h4 class="mt-3 text-secondary font-weight-bold">Kho đồ trống</h4>
+                <p class="text-muted mb-0">Hiện tại không có thiết bị hoặc phòng Lab nào khả dụng để mượn.</p>
+            </div>
+        </div>
+
+        <script th:inline="javascript">
+            document.addEventListener("DOMContentLoaded", function() {
+                var errorModalId = /*[[${errorModalId}]]*/ null;
+                if (errorModalId !== null) {
+                    var modalId = '#borrowModal' + errorModalId;
+                    $(modalId).modal('show');
+                }
+
+                $('.borrow-modal').on('hidden.bs.modal', function () {
+                    var $modal = $(this);
+
+                    $modal.find('form').trigger('reset');
+
+                    $modal.find('.is-invalid').removeClass('is-invalid');
+
+                    $modal.find('.invalid-feedback').hide();
+                });
+
+                $('.borrow-modal form input, .borrow-modal form textarea').on('input', function() {
+                    $(this).removeClass('is-invalid');
+                    $(this).siblings('.invalid-feedback').hide();
+                });
+            });
+        </script>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 </body>
 </html>
