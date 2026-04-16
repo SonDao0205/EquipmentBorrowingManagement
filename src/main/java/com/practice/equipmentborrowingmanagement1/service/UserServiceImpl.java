@@ -2,6 +2,8 @@ package com.practice.equipmentborrowingmanagement1.service;
 
 import com.practice.equipmentborrowingmanagement1.customException.EmailException;
 import com.practice.equipmentborrowingmanagement1.customException.InvalidCredentialsException;
+import com.practice.equipmentborrowingmanagement1.model.dto.UserRequest;
+import com.practice.equipmentborrowingmanagement1.model.entity.Role;
 import com.practice.equipmentborrowingmanagement1.model.entity.User;
 import com.practice.equipmentborrowingmanagement1.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,18 +11,24 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Service("UserService")
+@Service("userService")
 public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
 
     @Override
-    public void registerUser(User user) {
+    public void registerUser(UserRequest request) {
 
-        if (userRepository.existsByEmail(user.getEmail())) {
+        if (userRepository.existsByEmail(request.getEmail())) {
             throw new EmailException("Email đã tồn tại");
         }
+
+        User user = new User();
+        user.setFullName(request.getFullName());
+        user.setEmail(request.getEmail());
+        user.setPassword(request.getPassword());
+        user.setRole(Role.STUDENT);
 
         userRepository.save(user);
     }
@@ -30,21 +38,14 @@ public class UserServiceImpl implements UserService {
 
         User user = userRepository.findByEmail(email);
 
-        // check user tồn tại
         if (user == null) {
             throw new InvalidCredentialsException("Email hoặc mật khẩu không đúng");
         }
 
-        // check password
         if (!user.getPassword().equals(password)) {
             throw new InvalidCredentialsException("Email hoặc mật khẩu không đúng");
         }
 
         return user;
-    }
-
-    @Override
-    public Optional<User> findUserByEmail(String email) {
-        return Optional.ofNullable(userRepository.findByEmail(email));
     }
 }

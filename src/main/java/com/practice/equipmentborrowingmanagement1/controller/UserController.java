@@ -2,85 +2,102 @@ package com.practice.equipmentborrowingmanagement1.controller;
 
 import com.practice.equipmentborrowingmanagement1.customException.EmailException;
 import com.practice.equipmentborrowingmanagement1.customException.InvalidCredentialsException;
-import com.practice.equipmentborrowingmanagement1.model.entity.Role;
+import com.practice.equipmentborrowingmanagement1.model.dto.UserRequest;
 import com.practice.equipmentborrowingmanagement1.model.entity.User;
 import com.practice.equipmentborrowingmanagement1.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/auth")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    // ===================== REGISTER =====================
 
     @GetMapping("/register")
     public String showRegisterForm(Model model) {
-        model.addAttribute("user", new User());
+        model.addAttribute("user", new UserRequest());
         return "auth/register";
     }
 
     @PostMapping("/register")
     public String register(
-            @Valid @ModelAttribute("user") User user,
+            @Valid @ModelAttribute("user") UserRequest request,
             BindingResult result
-    ){
-        if (result.hasErrors()){
+    ) {
+        if (result.hasErrors()) {
             return "auth/register";
         }
 
         try {
-            userService.registerUser(user);
-            return "redirect:/auth/login"; // chuyển sang trang login
+            userService.registerUser(request);
+            return "redirect:/auth/login";
+
         } catch (EmailException e) {
             result.rejectValue("email", "error.user", e.getMessage());
             return "auth/register";
         }
     }
 
+    // ===================== LOGIN =====================
+
     @GetMapping("/login")
-    public String login(Model model, HttpSession session) {
-        User userLogin = (User) session.getAttribute("userLogin");
-        if (userLogin != null) {
-            return (userLogin.getRole() == Role.ADMIN) ? "redirect:/admin" : "redirect:/student";
+    public String showLoginForm(Model model, HttpSession session) {
+
+        if (session.getAttribute("userLogin") != null) {
+            return "redirect:/home";
         }
 
-        model.addAttribute("user", new User());
-        return "auth/login"; // Sửa đường dẫn trả về
+        model.addAttribute("user", new UserRequest());
+        return "auth/login";
     }
 
     @PostMapping("/login")
-    public String doLogin(@ModelAttribute("user") User user, Model model, HttpSession session) {
+    public String login(
+            @Valid @ModelAttribute("user") UserRequest request,
+            BindingResult result,
+            Model model,
+            HttpSession session
+    ) {
+        if (result.hasErrors()) {
+            return "auth/login";
+        }
+
         try {
-            User u = userService.login(user.getEmail(), user.getPassword());
-            session.setAttribute("userLogin", u);
+            User user = userService.login(
+                    request.getEmail(),
+                    request.getPassword()
+            );
 
-            if (u.getRole() == Role.ADMIN){
-                return "redirect:/admin";
-            }
-            if (u.getRole() == Role.STUDENT) {
-                return "redirect:/student";
-            }
+            session.setAttribute("userLogin", user.getId());
+            session.setAttribute("role", user.getRole());
 
-            return "redirect:/home";
+            return switch (user.getRole()) { // điều hướng
+                case ADMIN -> "redirect:/admin";
+                case STUDENT -> "redirect:/student";
+            };
+
         } catch (InvalidCredentialsException e) {
             model.addAttribute("error", e.getMessage());
-            return "auth/login"; // Sửa đường dẫn trả về
+            return "auth/login";
         }
     }
+
+    // ===================== LOGOUT =====================
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
-        return "redirect:/auth/login"; // Sửa đường dẫn redirect
+        return "redirect:/auth/login";
     }
 }
