@@ -15,10 +15,19 @@
 <body>
     <div layout:fragment="content" class="container mt-4">
         <div class="container" style="max-width: 600px;">
-                <form th:action="@{/admin/save}" th:object="${equipment}" method="post" class="mt-4">
+                <form th:action="@{/admin/save}" th:object="${equipment}" method="post" class="mt-4" enctype="multipart/form-data">
                     <div class="form-group">
                         <label>Tên thiết bị:</label>
                         <input type="text" th:field="*{name}" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-bold">Ảnh :</label>
+                        <input type="file" name="fileImage" class="form-control-file border p-1 rounded">
+                        <div th:if="${equipment.image != null}" class="mt-2 text-center">
+                            <p class="small text-muted mb-1">Ảnh hiện tại:</p>
+                            <img th:src="@{'/display-images/' + ${equipment.image}}"
+                                 class="img-thumbnail shadow-sm" style="height: 100px;">
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Loại (Type):</label>

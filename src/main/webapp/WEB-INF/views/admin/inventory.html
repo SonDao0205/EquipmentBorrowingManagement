@@ -25,6 +25,7 @@
             <table class="table table-striped">
                 <thead>
                 <tr>
+                    <th>Ảnh</th>
                     <th>ID</th>
                     <th>Tên thiết bị</th>
                     <th>Loại</th>
@@ -34,13 +35,15 @@
                 </thead>
                 <tbody>
                 <tr th:each="item : ${items}">
+                    <td class="align-middle">
+                        <img th:src="@{'/display-images/' + ${item.image}}" alt="No image" class="rounded border shadow-sm" style="width: 60px; height: 60px; object-fit: cover;"/>
+                    </td>
                     <td th:text="${item.id}"></td>
                     <td th:text="${item.name}"></td>
                     <td th:text="${item.type}"></td>
                     <td th:text="${item.stock}"></td>
                     <td>
-                        <a th:href="@{'/admin/edit/' + ${item.id}}" class="btn btn-warning btn-sm">Sửa</a>
-                        <a th:href="@{'/admin/delete/' + ${item.id}}" class="btn btn-danger btn-sm" onclick="return confirm('Xóa?')">Xóa</a>
+                        <a th:href="@{'/admin/delete/' + ${item.id}}" class="btn btn-danger btn-sm">Xóa</a>
                     </td>
                 </tr>
                 </tbody>
