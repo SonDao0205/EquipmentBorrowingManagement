@@ -3,6 +3,8 @@ package com.practice.equipmentborrowingmanagement1.model.entity;
 import java.time.LocalDate;
 
 public class EquipmentForm {
+    public static int count;
+
     private int id;
     private String fullName;
     private String studentId;
@@ -17,8 +19,8 @@ public class EquipmentForm {
     public EquipmentForm() {
     }
 
-    public EquipmentForm(int id, String fullName, String studentId, String email, int quantity, LocalDate borrowDate, LocalDate returnDate, String reason, boolean status, Equipment equipment) {
-        this.id = id;
+    public EquipmentForm(String fullName, String studentId, String email, int quantity, LocalDate borrowDate, LocalDate returnDate, String reason, boolean status, Equipment equipment) {
+        this.id = ++count;
         this.fullName = fullName;
         this.studentId = studentId;
         this.email = email;
