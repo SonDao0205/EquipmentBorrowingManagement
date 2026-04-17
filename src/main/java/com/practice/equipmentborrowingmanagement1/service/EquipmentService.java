@@ -54,51 +54,19 @@ public class EquipmentService {
         return equip != null && equip.isStatus() && equip.getStock() >= quantity;
     }
 
-    // Kiểm tra số lượng tồn kho
-    public int getAvailableQuantity(int id) {
-        return equipmentRepository.getAvailableQuantity(id);
-    }
-
-    // Mượn thiết bị
-    public boolean borrowEquipment(int id, int quantity) {
-        if (!exists(id) || !isAvailable(id, quantity)) {
-            return false;
-        }
-
-        equipmentRepository.decreaseQuantity(id, quantity);
-        return true;
-    }
-
-    // Trả thiết bị
-    public void returnEquipment(int id, int quantity) {
-        if (quantity > 0 && exists(id)) {
-            equipmentRepository.increaseQuantity(id, quantity);
-        }
-    }
-
     // Thêm thiết bị
     public void addEquipment(Equipment equipment) {
         equipmentRepository.save(equipment);
     }
 
-    // Cập nhật thiết bị
-    public boolean updateEquipment(Equipment equipment) {
-        if (!exists(equipment.getId())) {
-            return false;
-        }
-
-        equipmentRepository.update(equipment);
-        return true;
-    }
 
     // Xóa thiết bị
-    public boolean deleteEquipment(int id) {
+    public void deleteEquipment(int id) {
         if (!exists(id)) {
-            return false;
+            return;
         }
 
         equipmentRepository.delete(id);
-        return true;
     }
 
     public String uploadFile(MultipartFile file) {

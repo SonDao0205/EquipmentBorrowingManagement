@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/admin")
@@ -64,8 +65,24 @@ public class AdminController {
     }
 
     @GetMapping("/approve/{id}")
-    public String approveEquipmentForm(@PathVariable("id") Integer id) {
-        equipmentFormService.updateStatus(id);
+    public String approveEquipmentForm(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
+        try {
+            equipmentFormService.updateStatus(id);
+            redirectAttributes.addFlashAttribute("success", "Đã duyệt đơn và trừ kho thành công!");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin/dashboard";
+    }
+
+    @GetMapping("/return/{id}")
+    public String returnEquipment(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
+        try {
+            equipmentFormService.returnEquipment(id);
+            redirectAttributes.addFlashAttribute("success", "Xác nhận trả thiết bị thành công! Số lượng đã được hoàn vào kho.");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
         return "redirect:/admin/dashboard";
     }
 }

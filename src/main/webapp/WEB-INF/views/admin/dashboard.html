@@ -109,6 +109,52 @@
             color: #6c5ce7;
             margin-right: 15px;
         }
+
+        .alert-custom {
+            border: none;
+            border-radius: 15px;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .alert-custom i {
+            font-size: 1.5rem;
+            margin-right: 15px;
+        }
+
+        .btn-approve {
+            background-color: #00b894;
+            color: white !important;
+            padding: 8px 15px;
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none !important;
+            transition: 0.3s;
+        }
+
+        .btn-approve:hover {
+            filter: brightness(0.9);
+            transform: translateY(-2px);
+        }
+
+        /* Nút Đã trả hàng */
+        .btn-return {
+            background-color: #0984e3;
+            color: white !important;
+            padding: 8px 15px;
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none !important;
+            transition: 0.3s;
+        }
+
+        .btn-return:hover {
+            filter: brightness(0.9);
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 <body>
@@ -121,6 +167,21 @@
             </a>
         </div>
 
+        <div th:if="${success}" class="alert alert-success alert-custom alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill"></i>
+            <span th:text="${success}"></span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <div th:if="${error}" class="alert alert-danger alert-custom alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span th:text="${error}"></span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
         <hr style="opacity: 0.05;">
 
         <div class="table-container shadow-sm">
@@ -157,6 +218,13 @@
                            th:href="@{/admin/approve/{id}(id=${f.id})}"
                            class="btn-approve">
                             <i class="bi bi-check2-circle mr-1"></i> Duyệt đơn
+                        </a>
+
+                        <a th:if="${f.status}"
+                           th:href="@{/admin/return/{id}(id=${f.id})}"
+                           class="btn-return"
+                           onclick="return confirm('Xác nhận thiết bị đã được trả lại kho?')">
+                            <i class="bi bi-arrow-return-left mr-1"></i> Đã trả hàng
                         </a>
                     </td>
                 </tr>

@@ -78,7 +78,6 @@ public class ClientController {
             // Thông báo thành công qua Flash Attributes
             redirectAttributes.addFlashAttribute("successMessage", "Đăng ký mượn thành công! Vui lòng chờ phê duyệt.");
         } catch (RuntimeException e) {
-            // Bắt lỗi RuntimeException từ Service
             model.addAttribute("equipments", equipmentService.getAvailableEquipments());
             model.addAttribute("errorModalId", request.getEquipmentId());
             bindingResult.rejectValue("quantity", "error.quantity", e.getMessage());
