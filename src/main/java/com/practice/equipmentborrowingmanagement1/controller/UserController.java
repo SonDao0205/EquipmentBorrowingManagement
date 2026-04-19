@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/auth")
-public class UserController {
+public class    UserController {
 
     @Autowired
     private UserService userService;
