@@ -1,6 +1,8 @@
 package com.practice.equipmentborrowingmanagement1.model.entity;
 
 public class Equipment {
+    public static int count;
+
     private int id;
     private String name;
     private String type;
@@ -11,8 +13,8 @@ public class Equipment {
     public Equipment() {
     }
 
-    public Equipment(int id, String name, String type, String image, int stock, boolean status) {
-        this.id = id;
+    public Equipment(String name, String type, String image, int stock, boolean status) {
+        this.id = ++count;
         this.name = name;
         this.type = type;
         this.image = image;

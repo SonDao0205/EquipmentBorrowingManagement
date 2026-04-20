@@ -1,6 +1,8 @@
 package com.practice.equipmentborrowingmanagement1.model.entity;
 
 public class User {
+    public static int count = 0;
+
     private int id;
     private String fullName;
     private String email;
@@ -10,8 +12,8 @@ public class User {
     public User() {
     }
 
-    public User(int id, String fullName, String email, String password, Role role) {
-        this.id = id;
+    public User(String fullName, String email, String password, Role role) {
+        this.id = ++count;
         this.fullName = fullName;
         this.email = email;
         this.password = password;
